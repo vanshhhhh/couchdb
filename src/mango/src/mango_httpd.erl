@@ -204,7 +204,7 @@ handle_explain_req(#httpd{method = 'POST'} = Req, Db) ->
 handle_explain_req(Req, _Db) ->
     chttpd:send_method_not_allowed(Req, "POST").
 
-handle_find_req(#httpd{method = 'POST'} = Req, Db) ->
+handle_find_req(#httpd{method = Method} = Req, Db) when Method == 'POST'; Method == 'QUERY' ->
     chttpd:validate_ctype(Req, "application/json"),
     Body = maybe_set_partition(Req),
     {ok, Opts0} = mango_opts:validate_find(Body),
@@ -222,7 +222,7 @@ handle_find_req(#httpd{method = 'POST'} = Req, Db) ->
             chttpd:send_error(Req, Error)
     end;
 handle_find_req(Req, _Db) ->
-    chttpd:send_method_not_allowed(Req, "POST").
+    chttpd:send_method_not_allowed(Req, "POST,QUERY").
 
 set_user_ctx(#httpd{user_ctx = Ctx}, Db) ->
     {ok, NewDb} = couch_db:set_user_ctx(Db, Ctx),
