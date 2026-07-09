@@ -76,7 +76,6 @@ class QueryMethodTestsMixin:
         post = self.db.sess.request("POST", self.db.path("_find"), data=invalid_body, headers=headers)
         query = self.db.sess.request("QUERY", self.db.path("_find"), data=invalid_body, headers=headers)
         
-        # Explicitly assert expected status code 400
         self.assertEqual(post.status_code, 400)
         self.assertEqual(query.status_code, 400)
         
@@ -100,7 +99,6 @@ class QueryMethodTestsMixin:
         post = self.db.sess.request("POST", self.db.path("_find"), data=body, headers=headers)
         query = self.db.sess.request("QUERY", self.db.path("_find"), data=body, headers=headers)
         
-        # Explicitly assert expected status code 415
         self.assertEqual(post.status_code, 415)
         self.assertEqual(query.status_code, 415)
         
@@ -117,7 +115,7 @@ class QueryMethodTestsMixin:
         self.assertEqual(post_json["reason"], query_json["reason"])
 
     def test_query_method_allowed(self):
-        # GET should return 405 with "POST,QUERY" in Allow header
+        # GET on _find should return 405 Method Not Allowed
         r = self.db.sess.request("GET", self.db.path("_find"))
         self.assertEqual(r.status_code, 405)
         allow = r.headers.get("Allow")

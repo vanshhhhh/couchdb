@@ -26,9 +26,12 @@
     index, which can be arbitrarily slow.
 
     .. note::
-        This endpoint also supports the HTTP ``QUERY`` method (RFC 10008)
-        as a safe, idempotent alternative to ``POST``. The request body
-        schema, headers, and response structure are identical.
+        This endpoint also supports the HTTP ``QUERY`` method, as defined
+        by RFC 10008. ``QUERY`` uses the same request body schema and
+        response structure as ``POST``.
+
+        The ``QUERY`` method is defined by RFC 10008 as safe and
+        idempotent.
 
     :param db: Database name
 

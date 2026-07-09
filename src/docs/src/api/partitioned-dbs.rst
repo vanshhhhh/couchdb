@@ -220,8 +220,9 @@ See the guide for
     specified partition id.
 
     .. note::
-        This endpoint also supports the HTTP ``QUERY`` method (RFC 10008)
-        as a safe, idempotent alternative to ``POST``.
+        The partitioned ``_find`` endpoint also supports the HTTP ``QUERY``
+        method. Refer to the main :ref:`_find <api/db/_find>` endpoint
+        documentation for request semantics.
 
     Refer to the :ref:`find endpoint <api/db/_find>`
     documentation for a complete description of the
