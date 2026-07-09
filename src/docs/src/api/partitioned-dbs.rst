@@ -219,6 +219,10 @@ See the guide for
     The returned view result will only contain rows with the
     specified partition id.
 
+    .. note::
+        This endpoint also supports the HTTP ``QUERY`` method (RFC 10008)
+        as a safe, idempotent alternative to ``POST``.
+
     Refer to the :ref:`find endpoint <api/db/_find>`
     documentation for a complete description of the
     available parameters and the format

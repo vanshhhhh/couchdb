@@ -64,6 +64,9 @@ class QueryMethodTestsMixin:
         headers = {"Content-Type": "application/json"}
         r = self.db.sess.request("QUERY", self.db.path("_explain"), data=body, headers=headers)
         self.assertEqual(r.status_code, 405)
+        allow = r.headers.get("Allow")
+        self.assertIsNotNone(allow)
+        self.assertEqual(allow.strip(), "POST")
 
     def test_query_method_errors(self):
         # Malformed JSON with application/json header
@@ -139,7 +142,9 @@ class QueryMethodTestsMixin:
         post_json = post_p1.json()
         query_json = query_p1.json()
         
-        self.assertEqual(post_json.get("docs"), query_json.get("docs"))
+        self.assertIn("docs", post_json)
+        self.assertIn("docs", query_json)
+        self.assertEqual(post_json["docs"], query_json["docs"])
         
         # Assert bookmark exists
         self.assertIn("bookmark", post_json)
@@ -166,7 +171,12 @@ class QueryMethodTestsMixin:
         post_p2.raise_for_status()
         query_p2.raise_for_status()
         
-        self.assertEqual(post_p2.json().get("docs"), query_p2.json().get("docs"))
+        post_p2_json = post_p2.json()
+        query_p2_json = query_p2.json()
+        
+        self.assertIn("docs", post_p2_json)
+        self.assertIn("docs", query_p2_json)
+        self.assertEqual(post_p2_json["docs"], query_p2_json["docs"])
         
         # Cross-method bookmark compatibility
         body_p2_cross_post = {
@@ -186,7 +196,25 @@ class QueryMethodTestsMixin:
         post_p2_cross.raise_for_status()
         query_p2_cross.raise_for_status()
         
-        self.assertEqual(post_p2_cross.json().get("docs"), query_p2_cross.json().get("docs"))
+        post_p2_cross_json = post_p2_cross.json()
+        query_p2_cross_json = query_p2_cross.json()
+        
+        self.assertIn("docs", post_p2_cross_json)
+        self.assertIn("docs", query_p2_cross_json)
+        
+        # Crossed continuation compared to corresponding native chain
+        self.assertEqual(
+            post_p2_cross_json["docs"],
+            query_p2_json["docs"],
+        )
+        self.assertEqual(
+            query_p2_cross_json["docs"],
+            post_p2_json["docs"],
+        )
+        self.assertEqual(
+            post_p2_cross_json["docs"],
+            query_p2_cross_json["docs"],
+        )
 
 
 class NonPartitionedQueryMethodTests(mango.UserDocsTests, QueryMethodTestsMixin):

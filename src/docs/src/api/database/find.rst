@@ -25,6 +25,11 @@
     allowed, they use the built-in :ref:`_all_docs <api/db/all_docs>`
     index, which can be arbitrarily slow.
 
+    .. note::
+        This endpoint also supports the HTTP ``QUERY`` method (RFC 10008)
+        as a safe, idempotent alternative to ``POST``. The request body
+        schema, headers, and response structure are identical.
+
     :param db: Database name
 
     :<header Content-Type: - :mimetype:`application/json`

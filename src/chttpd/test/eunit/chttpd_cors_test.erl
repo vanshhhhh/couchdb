@@ -71,6 +71,16 @@ custom_cors_config() ->
             ]}}
     ].
 
+query_cors_config() ->
+    [
+        {<<"enable_cors">>, true},
+        {<<"allow_methods">>, ["GET", "POST", "QUERY"]},
+        {<<"origins">>,
+            {[
+                {list_to_binary(?DEFAULT_ORIGIN), {[]}}
+            ]}}
+    ].
+
 access_control_cors_config(AllowCredentials) ->
     [
         {<<"enable_cors">>, true},
@@ -179,6 +189,13 @@ cors_enabled_custom_config_test_() ->
             {foreach, fun custom_cors_config/0, [
                 fun test_good_headers_preflight_request_with_custom_config_/1,
                 fun test_db_request_with_custom_config_/1
+            ]}}}.
+
+cors_enabled_query_config_test_() ->
+    {"CORS enabled with QUERY in allow_methods",
+        {setup, fun chttpd_test_util:start_couch/0, fun chttpd_test_util:stop_couch/1,
+            {foreach, fun query_cors_config/0, [
+                fun test_query_preflight_request_/1
             ]}}}.
 
 cors_enabled_multiple_config_test_() ->
@@ -575,6 +592,25 @@ test_db_request_credentials_header_on_(OwnerConfig) ->
         ?_assertEqual(
             "true",
             header(Headers1, "Access-Control-Allow-Credentials")
+        )
+    ].
+
+test_query_preflight_request_(OwnerConfig) ->
+    Headers = [
+        {"Origin", ?DEFAULT_ORIGIN},
+        {"Access-Control-Request-Method", "QUERY"}
+    ],
+    Req = mock_request('OPTIONS', "/", Headers),
+    ?assert(chttpd_cors:is_cors_enabled(OwnerConfig)),
+    {ok, Headers1} = chttpd_cors:maybe_handle_preflight_request(Req, OwnerConfig),
+    [
+        ?_assertEqual(
+            ?DEFAULT_ORIGIN,
+            header(Headers1, "Access-Control-Allow-Origin")
+        ),
+        ?_assertEqual(
+            string_headers(["GET", "POST", "QUERY"]),
+            header(Headers1, "Access-Control-Allow-Methods")
         )
     ].
 
