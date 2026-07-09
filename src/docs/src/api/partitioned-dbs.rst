@@ -221,13 +221,11 @@ See the guide for
 
     .. note::
         The partitioned ``_find`` endpoint also supports the HTTP ``QUERY``
-        method. Refer to the main :ref:`_find <api/db/_find>` endpoint
-        documentation for request semantics.
+        method.
 
-    Refer to the :ref:`find endpoint <api/db/_find>`
-    documentation for a complete description of the
-    available parameters and the format
-    of the returned data.
+    Refer to the main :ref:`_find <api/db/_find>` endpoint
+    documentation for request semantics, complete description of the
+    available parameters, and the format of the returned data.
 
     :param db: Database name
     :param partition_id: Name of the partition to query
